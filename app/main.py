@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Body, Depends
-import schemas
-import models
+from . import models
+from . import schemas
 
-from database import Base, engine, SessionLocal
+from app.database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session 
 
-Base.metadata.create_all(engine)
+models.Base.metadata.create_all(bind=engine)
 
 def get_session():
     session = SessionLocal()
@@ -22,21 +22,33 @@ fakeDatabase = {
     3:{'task':'Start stream'},
 }
 
-@app.get("/")
-def getItems(session: Session = Depends(get_session)):
+@app.get("/player")
+def get_player(session: Session = Depends(get_session)):
     items = session.query(models.Item).all()
     return items
 
-@app.get("/{squad}")
-def getItem(country:str, session: Session = Depends(get_session)):
-    item = session.query(models.Item).filter_by(squad = country).all()
+@app.get("/player/{squad}")
+def get_squad(squad:str, session: Session = Depends(get_session)):
+    item = session.query(models.Item).filter_by(country = squad).all()
     return item
 
 
-@app.get("/{age}")
-def getItem(age_player: int, session: Session = Depends(get_session)):
-    item2 = session.query(models.Item).filter_by(models.Item.age <= age_player).all()
-    return item2
+# @app.get("/player/{age}")
+# def get_age(age_player: int, session: Session = Depends(get_session)):
+#     item2 = session.query(models.Item).filter_by(models.Item.age == age_player).all()
+#     return item2
+    
+# @app.get("/player/{match played}")
+# async def get_match_played(play: int, session: Session=Depends(get_session)):
+#     query1 = session.query(models.Item).filter_by(models.Item.mp == play).all()
+#     return query1
+
+#@app.post("/player")
+#@app.put("/player/{}")
+#@app.delete
+
+
+
 #@app.get("/{squads}")
 #def getplayer(country:str):
     player = get_session().query(Item).filter_by(squad = country).all()
