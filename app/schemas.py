@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 class Item(BaseModel):
-    squad: str
+    country: str
     name: str
-    pos: str
+    position: str
     age: int
     mp: int

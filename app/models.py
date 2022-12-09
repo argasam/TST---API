@@ -12,4 +12,3 @@ class Item(Base):
     mp = Column(Integer)
 
 
-

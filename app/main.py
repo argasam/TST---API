@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Body, Depends
+
+from app.auth_handler import JWTBearer
 from . import models
 from . import schemas
+from starlette.responses import RedirectResponse
 
 from app.database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session 
@@ -31,6 +34,14 @@ def get_player(session: Session = Depends(get_session)):
 def get_squad(squad:str, session: Session = Depends(get_session)):
     item = session.query(models.Item).filter_by(country = squad).all()
     return item
+
+@app.post("/test")
+async def test(session: JWTBearer = Depends(JWTBearer())):
+    print("memes")
+    return session
+
+# @app.put("/player")
+# def update_squad()
 
 
 # @app.get("/player/{age}")
@@ -78,18 +89,20 @@ def get_squad(squad:str, session: Session = Depends(get_session)):
 #     return fakeDatabase
 
 
-#@app.put("/{id}")
-#def updateItem(id:int, item:schemas.Item, session: Session = Depends(get_session)):
-    itemObject = session.query(models.Item).get(id)
-    itemObject.task = item.task
-    session.commit()
+@app.put("/player")
+def update_player(name:str, item:schemas.Item, sess: Session = Depends(get_session), session: JWTBearer = Depends(JWTBearer())):
+    itemObject = sess.query(models.Item).get(name)
+    itemObject.age = item.age
+    itemObject.mp = item.mp
+    
+    sess.commit()
     return itemObject
 
 
-#@app.delete("/{id}")
-#def deleteItem(id:int, session: Session = Depends(get_session)):
-    itemObject = session.query(models.Item).get(id)
-    session.delete(itemObject)
-    session.commit()
-    session.close()
-    return 'Item was deleted...'
+app.delete("/player")
+def delete_playert(name:str, sess: Session = Depends(get_session), session: JWTBearer = Depends(JWTBearer())):
+    itemObject = sess.query(models.Item).get(name)
+    sess.delete(itemObject)
+    sess.commit()
+    sess.close()
+    return 'Player was deleted...'
