@@ -7,6 +7,7 @@ from starlette.responses import RedirectResponse
 
 from app.database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session 
+import requests
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -24,6 +25,9 @@ fakeDatabase = {
     2:{'task':'Write blog'},
     3:{'task':'Start stream'},
 }
+@app.get()
+async def get_home(session: Session = Depends(get_session)):
+    return ({"API": "ListPlayer"})
 
 @app.get("/player")
 def get_player(session: Session = Depends(get_session)):
@@ -39,6 +43,37 @@ def get_squad(squad:str, session: Session = Depends(get_session)):
 async def test(session: JWTBearer = Depends(JWTBearer())):
     print("memes")
     return session
+
+@app.post("/login")
+async def login_user(user:  schemas.UserLoginModel):
+    url = "http://128.199.106.160/login"
+    body = {
+        "username": user.username,
+        "password": user.password
+    }
+    headers = {}
+    response = requests.post(
+        url,
+        json=body,
+        headers=headers
+    )
+    return response.json()
+
+@app.post("/register")
+async def register_user(user:  schemas.UserRegisterModel):
+    url = "http://128.199.106.160/register"
+    body = {
+        "username": user.username,
+        "name" : user.name,
+        "password": user.password
+    }
+    headers = {}
+    response = requests.post(
+        url,
+        json=body,
+        headers=headers
+    )
+    return response.json()
 
 # @app.put("/player")
 # def update_squad()

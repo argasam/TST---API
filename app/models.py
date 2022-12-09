@@ -11,4 +11,3 @@ class Item(Base):
     age = Column(Integer)
     mp = Column(Integer)
 
-

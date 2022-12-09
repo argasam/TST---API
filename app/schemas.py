@@ -6,3 +6,12 @@ class Item(BaseModel):
     position: str
     age: int
     mp: int
+
+class UserLoginModel(BaseModel):
+    username: str
+    password: str
+
+class UserRegisterModel(BaseModel):
+    username: str
+    name: str
+    password: str
